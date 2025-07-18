@@ -39,22 +39,41 @@ export default function App() {
   }
 
   function handleSelectedFriend(friend) {
-    setSelectedFriend((selected) =>
-      selected?.id === friend.id ? null : friend
-    );
+    setSelectedFriend((selected) => (selected?.id === friend.id ? null : friend));
     setShowAddFriend(false);
+  }
+
+  function handleSplitBill(value) {
+    setFriends(
+      friends.map((friend) => {
+        if (friend.id === selectedFriend.id) {
+          return {
+            ...friend,
+            balance: friend.balance + value,
+          };
+        }
+        return friend;
+      })
+    );
+    setSelectedFriend(null);
   }
 
   return (
     <div className="app">
       <div className="sidebar">
-        <Friendlist friends={friends} onSelected={handleSelectedFriend} />
+        <Friendlist
+          friends={friends}
+          onSelected={handleSelectedFriend}
+          selectedFriend={selectedFriend}
+        />
         {showAddFriend && <FormAddFriend onAddFriend={handleAddFriend} />}
         <button className="button" onClick={handleShowAddFriend}>
           {showAddFriend ? "Tutup" : "Tambah"}
         </button>
       </div>
-      {selectedFriend && <FormSplitBill />}
+      {selectedFriend && (
+        <FormSplitBill selectedFriend={selectedFriend} onSplitBill={handleSplitBill} />
+      )}
     </div>
   );
 }
